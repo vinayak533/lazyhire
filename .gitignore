@@ -1,0 +1,19 @@
+/node_modules/
+/.next/
+/out/
+/coverage/
+/artifacts/
+/test-results/
+/playwright-report/
+*.tsbuildinfo
+next-env.d.ts
+.env*
+!.env.local.example
+api keys
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+/data/
+*.log
+.DS_Store

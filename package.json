@@ -1,0 +1,77 @@
+{
+  "name": "orvio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "dev:bg": "node scripts/dev-background.mjs",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --conditions react-server --import tsx --test tests/*.test.ts",
+    "test:e2e": "node scripts/e2e.mjs",
+    "verify:live": "node --conditions react-server --import tsx scripts/verify-live-integrations.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:check": "tsx scripts/check-db.ts",
+    "brand:assets": "node scripts/brand-assets.mjs",
+    "kb:import": "node --conditions react-server --import tsx scripts/career-tutor.ts import",
+    "kb:embed": "node --conditions react-server --import tsx scripts/career-tutor.ts embed",
+    "kb:audit": "node --conditions react-server --import tsx scripts/career-tutor.ts audit",
+    "kb:status": "node --conditions react-server --import tsx scripts/career-tutor.ts status",
+    "kb:review-queue": "node --conditions react-server --import tsx scripts/career-tutor.ts review-queue",
+    "kb:purge": "node --conditions react-server --import tsx scripts/career-tutor.ts purge",
+    "kb:author": "node --conditions react-server --import tsx scripts/career-tutor-author.ts",
+    "kb:evaluate": "node --conditions react-server --import tsx scripts/evaluate-career-tutor.ts"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.0",
+    "@huggingface/transformers": "^4.2.0",
+    "@radix-ui/react-slot": "^1.2.0",
+    "adm-zip": "^0.6.0",
+    "better-sqlite3": "^12.0.0",
+    "cheerio": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dotenv": "^17.0.0",
+    "drizzle-orm": "^0.45.0",
+    "lucide-react": "^0.577.0",
+    "mammoth": "^1.12.2",
+    "next": "^16.0.0",
+    "pdf-parse": "^2.4.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.4",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^4.5.4"
+  },
+  "overrides": {
+    "sharp": "$sharp",
+    "onnxruntime-node": {
+      "adm-zip": "$adm-zip"
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/adm-zip": "^0.5.8",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
+    "postcss": "^8.5.0",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

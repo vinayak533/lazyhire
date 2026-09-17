@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788692371730,
+      "tag": "0000_amused_the_fury",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788692736615,
+      "tag": "0001_daily_joseph",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788723556438,
+      "tag": "0002_glamorous_justin_hammer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1788761700000,
+      "tag": "0003_secure_users_and_isolation",
+      "breakpoints": true
+    }
+    ,{
+      "idx": 4,
+      "version": "6",
+      "when": 1788900000000,
+      "tag": "0004_career_tutor",
+      "breakpoints": true
+    }
+    ,{
+      "idx": 5,
+      "version": "6",
+      "when": 1789459200000,
+      "tag": "0005_application_drafts",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 222 54% 5%;
+    --foreground: 214 40% 96%;
+    --card: 222 43% 8%;
+    --primary: 39 100% 57%;
+    --primary-foreground: 222 54% 5%;
+    --primary-hover: 34 100% 49%;
+    --secondary: 221 36% 12%;
+    --muted: 220 28% 16%;
+    --muted-foreground: 216 16% 66%;
+    --accent: 217 64% 16%;
+    --destructive: 4 76% 58%;
+    --border: 219 31% 18%;
+    --input: 219 24% 28%;
+    --ring: 39 100% 57%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background font-sans text-sm font-normal text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at 12% -10%, hsl(217 92% 36% / 0.22), transparent 34%),
+      radial-gradient(circle at 88% 0%, hsl(32 100% 50% / 0.12), transparent 28%),
+      linear-gradient(180deg, hsl(223 58% 6%) 0%, hsl(var(--background)) 44%),
+      linear-gradient(hsl(218 38% 22% / 0.28) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(218 38% 22% / 0.2) 1px, transparent 1px);
+    background-size:
+      auto,
+      auto,
+      auto,
+      44px 44px,
+      44px 44px;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold tracking-heading;
+  }
+  ::selection {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  /* Native select popups inherit the control's colours. Keep the list opaque and
+     high-contrast so options never render translucent over the page. */
+  select {
+    color-scheme: dark;
+    color: hsl(var(--foreground));
+  }
+  select option,
+  select optgroup {
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    font-weight: 400;
+    padding: 0.4rem 0.6rem;
+  }
+  select option:hover,
+  select option:focus {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+  }
+  select option:checked {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+  select option:disabled {
+    color: hsl(var(--muted-foreground));
+  }
+  select:invalid,
+  select[data-placeholder="true"] {
+    color: hsl(var(--muted-foreground));
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}

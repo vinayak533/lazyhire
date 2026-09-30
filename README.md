@@ -1,156 +1,238 @@
 # LazyHire
 
-Next.js App Router + TypeScript AI-first career platform for focused job progress, with local SQLite caching, CV analysis, AI-assisted review, source selection, resume-fit insights, Career OS, and local application tracking.
+> A private, AI-assisted career workspace for discovering verified Kerala job openings, matching them against a candidate profile, reviewing CV quality, tailoring applications, and planning the next move with Career OS.
 
-## Run The Project Locally
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Drizzle-003b57?logo=sqlite&logoColor=white)](https://orm.drizzle.team/)
+[![Playwright](https://img.shields.io/badge/E2E-Playwright-2ead33?logo=playwright&logoColor=white)](https://playwright.dev/)
 
-Follow these steps from the project root:
+LazyHire is built as a serious career operating system rather than a toy job board. It combines source-aware job discovery, deterministic match scoring, CV parsing, explainable AI review, application tracking, and a private career assistant that uses authored knowledge before optional LLM fallback.
 
-```powershell
-cd A:\AI_PROJECTS\job-hunter
+Repository: [github.com/vinayak533/lazyhire](https://github.com/vinayak533/lazyhire)
+
+## Product Preview
+
+| Career brief | Ranked matches |
+| --- | --- |
+| <img src="portfolio-images/03-career-brief-search-workspace.png" alt="LazyHire career brief search workspace" width="420"> | <img src="portfolio-images/04-ranked-job-matches.png" alt="Ranked job matches with source status and application actions" width="420"> |
+
+| CV review | CV tailoring |
+| --- | --- |
+| <img src="portfolio-images/07-cv-review-score-and-suggestions.png" alt="CV review score and writing suggestions" width="420"> | <img src="portfolio-images/08-cv-tailoring-match-score.png" alt="CV tailoring with match score and side-by-side draft comparison" width="420"> |
+
+| Career OS | AI Career Assistant |
+| --- | --- |
+| <img src="portfolio-images/09-career-os-dashboard.png" alt="Career OS dashboard with readiness, roadmap, and next actions" width="420"> | <img src="portfolio-images/10-ai-career-assistant-resources.png" alt="AI Career Assistant with grouped learning resources" width="420"> |
+
+## What It Does
+
+- Finds real job openings from Kerala-focused sources including Technopark, Infopark, UL CyberPark, Evanios Jobs, Indeed India fallback, Kerala Knowledge Mission, JobsNEAR.in, Internshala Kerala, and web discovery.
+- Validates application paths so `Apply` only appears for credible posting or applicant-tracking URLs. Generic homepages are clearly labelled as `Company Website`.
+- Deduplicates postings across sources using canonical URLs plus company, normalized title, and location.
+- Ranks matches by freshness, source quality, location, role fit, skills overlap, and candidate preferences.
+- Tracks applications through `Saved`, `Applied`, `Interview`, and `Rejected` states.
+- Parses PDF and DOCX CV uploads, scores writing quality, highlights issues, and stores extracted text privately.
+- Generates optional AI CV reviews and tailored drafts while enforcing zero-fabrication guardrails.
+- Builds a Career OS snapshot from target role, CV evidence, saved applications, skill gaps, roadmap blocks, simulations, and next actions.
+- Ships an AI Career Assistant with session history, feedback, CV upload inside chat, grouped resource cards, verified YouTube cards, official resources, learning resources, and privacy settings.
+
+## Design Goals
+
+LazyHire optimizes for trust over volume.
+
+- Source transparency: every card shows where the opportunity came from.
+- Honest uncertainty: missing dates, slow providers, unavailable sources, and generic company pages are disclosed instead of hidden.
+- Candidate safety: application links are validated, external navigation is confirmed, and suspicious or weak signals are surfaced.
+- No invented CV claims: tailored drafts can reorganize and sharpen existing evidence, but they cannot fabricate experience, metrics, tools, or credentials.
+- Local-first development: SQLite, file-based config, local knowledge imports, and deterministic tests make the app easy to run without managed infrastructure.
+
+## Architecture
+
+```text
+app/                      Next.js App Router pages and route handlers
+components/               Product UI, app shell, job cards, CV workspace, Career OS
+lib/auth/                 Sessions, password auth, CSRF, MFA-related auth routes
+lib/career/               Candidate brief, ranking, application state
+lib/jobs/                 Source search, validation, merge, freshness, apply links
+lib/cv/                   CV parsing, scoring, storage, tailoring guardrails
+lib/career-os/            Evidence-driven Career OS snapshot engine
+lib/career-tutor/         Assistant retrieval, authored knowledge, chat persistence
+lib/security/             Rate limits, crypto, audit, upload scanning, HTTP helpers
+knowledge/career/         Authored career assistant corpus
+drizzle/                  SQLite migrations
+tests/                    Node tests and Playwright browser coverage
+portfolio-images/         Portfolio-ready screenshots for the repository
 ```
 
-1. Install Node.js 20.9 or newer.
+### Request Flow
 
-   Check your installed version:
+```text
+Candidate brief
+  -> source-specific job discovery
+  -> apply-link and posting validation
+  -> source merge and duplicate collapse
+  -> fit ranking and match explanation
+  -> application pipeline and CV review
+  -> Career OS snapshot and assistant context
+```
 
-   ```powershell
-   node --version
-   npm --version
-   ```
+### AI Flow
 
-2. Install project dependencies.
+```text
+Question or CV task
+  -> privacy and CSRF checks
+  -> authored knowledge retrieval when available
+  -> optional LLM fallback only when configured
+  -> response/resource grouping
+  -> persistence with encrypted private data
+```
 
-   ```powershell
-   npm.cmd install
-   ```
+## Tech Stack
 
-3. Create your local environment file.
+| Layer | Choices |
+| --- | --- |
+| Framework | Next.js 16 App Router, React 19, TypeScript |
+| UI | Tailwind CSS, local Inter font, shadcn-style primitives, lucide-react icons |
+| Data | SQLite, Drizzle ORM, encrypted local records |
+| AI | DeepSeek-compatible review path with Groq fallback, local authored tutor corpus |
+| Parsing | PDF and DOCX extraction with size and content checks |
+| Testing | Node test runner, Playwright, TypeScript, ESLint |
+| Security | CSP nonce per request, CSRF, session isolation, upload scanning, rate limiting, audit events |
 
-   ```powershell
-   Copy-Item .env.local.example .env.local
-   ```
+## Local Setup
 
-   For basic local testing, the app can run without live AI/search/email keys.
-   Add real values later when you want external job fallback, AI reviews, or production email:
+### Prerequisites
 
-   - `SERPAPI_KEY` for Indeed fallback search
-   - `DEEPSEEK_API_KEY` or `GROQ_API_KEY` for AI review/chat fallback
-   - `RESEND_API_KEY` or SMTP settings for production email
-   - strong `AUTH_SECRET`, `AUTH_HMAC_SECRET`, and `DATA_ENCRYPTION_KEY` for production
+- Node.js `20.9` or newer
+- npm
+- Windows PowerShell, macOS terminal, or Linux shell
 
-4. Create or update the local SQLite database.
+### Install
 
-   ```powershell
-   npm.cmd run db:migrate
-   ```
+```bash
+git clone https://github.com/vinayak533/lazyhire.git
+cd lazyhire
+npm install
+```
 
-5. Import the built-in AI Career Assistant knowledge base.
+### Configure
 
-   ```powershell
-   npm.cmd run kb:import
-   ```
+```bash
+cp .env.local.example .env.local
+```
 
-6. Start the development server.
+The app can run locally without live AI, search, or email keys. Add real values when you want those integrations:
 
-   ```powershell
-   npm.cmd run dev
-   ```
+```bash
+SERPAPI_KEY=...
+DEEPSEEK_API_KEY=...
+GROQ_API_KEY=...
+RESEND_API_KEY=...
+AUTH_SECRET=...
+AUTH_HMAC_SECRET=...
+DATA_ENCRYPTION_KEY=...
+DATABASE_PATH=./data/orvio.sqlite
+TUTOR_MODEL_CACHE=./data/models
+```
 
-7. Open the app in your browser.
+Use independent 32+ character values for the production auth and encryption secrets.
 
-   ```text
-   http://127.0.0.1:3000
-   ```
+### Database And Knowledge Base
 
-8. Stop the development server when finished.
+```bash
+npm run db:migrate
+npm run kb:import
+```
 
-   Press `Ctrl+C` in the terminal running `npm.cmd run dev`.
+Optional local embedding cache:
 
-If port `3000` is already being used, Next.js may offer another port or report the existing server. Use the URL printed in the terminal.
+```bash
+npm run kb:embed
+```
 
-### Current Local Server
+### Run
 
-During the latest verification, LazyHire was already running and responding successfully at:
+```bash
+npm run dev
+```
+
+Open:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-Job search uses Technopark, Infopark, Indeed India, UL CyberPark, Evanios Jobs, Kerala Knowledge Mission, JobsNEAR.in, Internshala Kerala, and a web-discovery layer. Indeed may block direct server fetches, so `SERPAPI_KEY` is used as an Indeed-scoped fallback when available; the same single Google Jobs lookup feeds web discovery, which runs after the direct sources only when they returned fewer than ten openings (or when the lookup already happened). Every discovered posting is validated (single-vacancy URL, real title and company, location, freshness, verifiable application link) before it becomes a card, and duplicates across sources collapse into one card that prefers the employer's own application page, then a trusted job platform, then an aggregator. Some platforms only expose account-gated or non-listing public pages; those sources are shown with warnings instead of fabricated results. `DEEPSEEK_API_KEY` powers the optional DeepSeek V4 Flash review when present, with `GROQ_API_KEY` kept as a fallback. The existing `api keys` file is preserved and ignored by Git, along with `.env.local` and SQLite files.
-
 ## Verification
 
-```powershell
-npm.cmd run lint
-npm.cmd run typecheck
-npm.cmd run build
-npm.cmd run db:check
-npm.cmd run test
-npm.cmd run test:e2e
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run db:check
+npm run test
+npm run test:e2e
 ```
 
-`db:check` opens the local database through Drizzle and confirms the cache table. Default file: `data/orvio.sqlite`. Override with `DATABASE_PATH` in `.env.local`.
+The browser suite covers auth flows, job discovery states, apply-link behavior, CV analysis, CV tailoring, Career OS, assistant resources, and privacy boundaries.
 
-## Design system
+## Security And Privacy
 
-- Premium dark surfaces with LazyHire orange and deep-blue accents.
-- Inter served locally; weights 400 and 600 only.
-- Semantic CSS color tokens in `app/globals.css`; Tailwind tokens in `tailwind.config.ts`.
-- A 4px base spacing rhythm; 6px controls and 8px cards; restrained shadows tuned for dark UI.
-- Customized shadcn-style source components in `components/ui`, using Radix Slot, CVA and the `cn` utility; CLI aliases in `components.json`.
-- Restrained entry animation, skeleton pulse, keyboard focus states, and reduced-motion support.
+- Private routes are protected by session checks in `proxy.ts`.
+- Every private response is sent with no-store cache headers.
+- CSP uses a per-request nonce so Next.js can hydrate without allowing blanket inline scripts.
+- State-changing requests use CSRF protection through `secureFetch`.
+- Uploaded CVs are checked for size, type, parseability, and unsafe payloads before storage.
+- Sensitive CV and account data is encrypted before persistence.
+- Session clearing removes current and legacy browser storage keys.
+- Career assistant preferences control whether profile context is used.
+- Tailored CV generation is guarded by `lib/cv/tailor-guardrails.ts` to reject fabricated numbers, unsupported requirements, and untraceable changes.
 
-Implementation references: [Next.js installation](https://nextjs.org/docs/app/getting-started/installation), [shadcn manual setup](https://ui.shadcn.com/docs/installation/manual), [Drizzle SQLite](https://orm.drizzle.team/docs/sqlite/get-started-sqlite).
+## Scripts
 
-Dependency audit: npm currently reports four moderate advisories in Drizzle Kit's development-only dependency chain, all stemming from its older nested esbuild. No production dependency advisories were reported. A forced audit fix would downgrade Drizzle Kit across incompatible versions, so it has not been applied.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local Next.js development server |
+| `npm run build` | Build the production app |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript checks |
+| `npm run test` | Run Node test suite |
+| `npm run test:e2e` | Run Playwright browser tests |
+| `npm run db:migrate` | Apply SQLite migrations |
+| `npm run db:check` | Verify database connectivity |
+| `npm run kb:import` | Import authored career tutor knowledge |
+| `npm run kb:embed` | Build local embedding cache |
+| `npm run brand:assets` | Regenerate LazyHire brand assets |
 
-## Brand assets
+## Portfolio Images
 
-`data/image/lazyhire-lockup.png` is generated from the original banner render and is
-what the authentication page shows. The source render carries a baked-in navy
-plate that is lighter than the page, so it read as a rectangular image pasted onto
-the background. Rebuild it after changing the source artwork:
+The `portfolio-images/` folder contains the final showcase set:
 
-```powershell
-npm.cmd run brand:assets
-```
+1. `01-signup-secure-onboarding.png`
+2. `02-login-private-access.png`
+3. `03-career-brief-search-workspace.png`
+4. `04-ranked-job-matches.png`
+5. `05-job-detail-and-apply-actions.png`
+6. `06-application-pipeline.png`
+7. `07-cv-review-score-and-suggestions.png`
+8. `08-cv-tailoring-match-score.png`
+9. `09-career-os-dashboard.png`
+10. `10-ai-career-assistant-resources.png`
+11. `11-account-privacy-controls.png`
+12. `12-design-system-components.png`
 
-The script keeps the mark, wordmark, slogan and their glows, turns the baked-in
-backdrop into real transparency, and feathers the crop so no cut line survives.
+These screenshots are intentionally checked into the repository so the GitHub page communicates the product without requiring a live deployment.
 
-## Content Security Policy
+## Roadmap
 
-The CSP is built per request in `proxy.ts`, which mints a script nonce that
-Next.js stamps onto the scripts it emits. Scripts are therefore never allowed
-via `unsafe-inline`. Because the nonce only exists for a live request, every page
-renders on demand (`export const dynamic = "force-dynamic"` in `app/layout.tsx`);
-all pages are private and already sent with `no-store`, so nothing is cached away.
-A static `script-src 'self'` blocks Next's own bootstrap and leaves the production
-build rendered but unhydrated — `tests/security.test.ts` guards against that
-regression.
+- Expand the authored Career Assistant corpus toward the 4,000-entry release gate.
+- Add more first-party employer and campus placement sources.
+- Improve source health telemetry and historical provider reliability tracking.
+- Add import/export flows for application history.
+- Add optional deployment documentation for production hosting.
 
-## Current Capabilities
+## License
 
-- Career OS includes a private AI Career Assistant with local semantic/keyword retrieval, session history, grouped resource cards (verified YouTube videos, official documentation and bodies, learning resources), CV upload in chat, feedback, adaptive roadmap guidance, and automatic AI fallback through the configured provider. The reviewed corpus holds 304 authored answers (191 original + 113 added on 2026-09-12) across software engineering, Python/Java/JavaScript/TypeScript/React/Next.js, data science and analytics, AI/ML, generative AI and LLM engineering, DevOps/cloud, cybersecurity, QA, UI/UX, product management, business analysis, accounting/finance, digital marketing, HR, comparisons, certifications, portfolios, interviews, career switching and learning resources. Every resource URL in the catalogue returned HTTP 200 during authoring and every video ID was verified through YouTube oEmbed; the runtime re-verifies videos before showing a card. Questions about pay, eligibility, visas, exam fees or anything else that changes over time are never answered from a stored entry. See [implementation and corpus status](docs/career-tutor.md); 304 entries does not yet satisfy the 4,000-entry release gate.
-
-- Role-first search with selectable Technopark, Indeed India, Infopark, UL CyberPark, Evanios Jobs, Kerala Knowledge Mission, JobsNEAR.in, and Internshala Kerala sources.
-- Source-labeled result cards (`Technopark`, `Infopark`, `Indeed India`, `Company Website`, `Web · <board>`) with View Job, Apply, Company Website and email actions. An Apply button appears only for a URL that passes `lib/jobs/apply-links.ts` (board posting paths, applicant-tracking systems, employer pages with application wording); homepages become "Company Website", and navigation, government, social, app-store, policy and search pages are dropped. The same validation runs on cached payloads.
-- Freshness-first ranking (24 h → 3 d → 7 d → 14 d → 30 d tiers) combined with role relevance, location and source quality; dates show as "Posted today", "N days ago" or "Date not verified" when the source gave none.
-- Duplicate detection across sources by canonical posting URL and by company + normalised title + location, keeping the most authoritative destination.
-- Per-source deadlines with a 30-second overall search budget; a slow provider reports "<Source> is taking longer than expected. Other job sources were loaded successfully." while the rest render.
-- AI-style live processing state while sources are searched, validated, matched, and ranked.
-- Résumé-aware match scores, missing-skills analysis, fit summaries, and résumé/cover-letter prompts, optionally refined by DeepSeek V4 Flash.
-- Tailor CV to This Job: an explainable match score with its contributing factors,
-  strong matches, missing requirements as gap keywords, recommended improvements,
-  a side-by-side original/tailored comparison with Edit, Regenerate, Apply Changes,
-  Undo and Export. A job opened from LazyHire search prefills the role, company and
-  description. Applying a tailored draft never overwrites the uploaded CV.
-- Zero-fabrication enforcement on tailored drafts: the prompt forbids invented
-  evidence, and `lib/cv/tailor-guardrails.ts` verifies the result — numbers and
-  spelled-out quantities must already appear in the CV, requirements the model
-  itself reported as missing may not appear in the draft, and every listed change
-  must quote wording that is really in the uploaded CV. A first draft that breaks a
-  rule is replayed once with the violations before the request is refused.
-- Local application tracking: Saved, Applied, Interview, Rejected.
-- Scam, expired-listing, missing-apply-path, and location-confirmation warnings.
+No license file is currently included. Treat this repository as all-rights-reserved until a license is added.
